@@ -1,0 +1,157 @@
+/* ── Section 6 — Final CTA + footer ─────────────────────────────────────────
+   Same tokens and type as Sections 4–5. A dark graphite CTA panel (the page's
+   closing statement) followed by a quiet footer on warm ivory. */
+
+.closing {
+  position: relative;
+  z-index: 2;                               /* above the fixed WebGL canvas */
+  transform: translateZ(0);
+  background: var(--paper);
+  padding: 8px var(--gutter) 40px;
+}
+.closing-inner { max-width: 1180px; margin: 0 auto; }
+
+/* CTA panel */
+.cta-panel {
+  position: relative;
+  overflow: hidden;
+  min-height: 400px;
+  display: grid;
+  place-items: center;
+  padding: 64px 48px;
+  border-radius: 24px;
+  background: linear-gradient(180deg, #2a2724 0%, var(--graphite) 45%, #1c1a18 100%);
+  box-shadow: 0 1px 2px rgba(37, 35, 33, 0.08), 0 24px 48px -28px rgba(37, 35, 33, 0.5);
+}
+
+.cta-curves {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+.cta-curves path { fill: none; stroke-width: 1.2; vector-effect: non-scaling-stroke; }
+
+.cta-content { position: relative; text-align: center; max-width: 900px; }
+
+.cta-eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 22px;
+  margin-bottom: 22px;
+  padding-left: 0.24em;
+  letter-spacing: 0.24em;
+  color: rgba(247, 244, 238, 0.78);
+}
+.cta-eyebrow::before,
+.cta-eyebrow::after {
+  content: "";
+  width: 40px;
+  height: 1px;
+  background: rgba(247, 244, 238, 0.24);
+}
+
+.cta-title {                                /* one step below the Section 4–5 headlines */
+  font-weight: 300;
+  font-size: clamp(32px, min(3.3vw, 5.6vh), 52px);
+  line-height: 1.04;
+  letter-spacing: -0.035em;
+  color: var(--paper);
+  text-wrap: balance;
+}
+.cta-accent { color: var(--brand-gold); }
+
+.cta-text {
+  max-width: 680px;
+  margin: 18px auto 0;
+  font-size: 18px;
+  line-height: 1.55;
+  color: rgba(247, 244, 238, 0.68);
+}
+
+/* gold button — same pill and arrow motion as the site's other buttons */
+.btn-gold {
+  margin-top: 34px;
+  color: var(--graphite);
+  background: var(--brand-gold);
+  transition: filter 0.4s var(--ease-out), background-color 0.4s var(--ease-out);
+}
+.btn-gold:hover { filter: brightness(1.07); }
+.btn-gold:focus-visible { outline-color: var(--brand-gold); }
+
+/* Footer */
+.site-footer { margin-top: 72px; color: var(--graphite); }
+
+.footer-top {
+  display: grid;
+  grid-template-columns: minmax(0, 1.25fr) minmax(0, 2.75fr);
+  align-items: start;
+}
+
+.footer-brand {
+  padding: 4px 48px 4px 0;
+}
+.footer-home { display: inline-block; color: var(--graphite); }
+.footer-logo { display: block; width: 136px; height: auto; }
+.footer-tagline {
+  margin-top: 20px;
+  max-width: 260px;
+  font-size: 15px;
+  line-height: 1.6;
+  color: var(--graphite-muted);
+}
+
+.footer-cols {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 24px;
+  padding-left: 56px;
+}
+.footer-heading {
+  font-size: 15px;
+  font-weight: 500;
+  letter-spacing: -0.005em;
+  color: var(--graphite);
+}
+.footer-col ul { margin-top: 16px; display: grid; gap: 12px; }
+.footer-col a {
+  font-size: 15px;
+  color: var(--graphite-muted);
+  transition: color 0.3s var(--ease-out);
+}
+.footer-col a:hover { color: var(--graphite); }
+
+.footer-bottom {
+  margin-top: 56px;
+  padding-top: 24px;
+  border-top: 1px solid var(--champagne-soft);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+.footer-copy { font-size: 14px; color: var(--graphite-muted); }
+
+/* Tablet */
+@media (max-width: 1080px) {
+  .footer-top { grid-template-columns: 1fr; gap: 40px; }
+  .footer-brand { padding: 0 0 32px; border-right: 0; border-bottom: 1px solid var(--champagne-soft); }
+  .footer-cols { padding-left: 0; }
+}
+
+/* Mobile */
+@media (max-width: 640px) {
+  .closing { padding-bottom: 28px; }
+  .cta-panel { min-height: 460px; padding: 56px 24px; border-radius: 20px; }
+  .cta-eyebrow { gap: 14px; letter-spacing: 0.2em; }
+  .cta-eyebrow::before, .cta-eyebrow::after { width: 24px; }
+  .cta-text { font-size: 16px; }
+  .btn-gold { width: 100%; max-width: 320px; }
+  .site-footer { margin-top: 56px; }
+  .footer-cols { grid-template-columns: repeat(2, minmax(0, 1fr)); row-gap: 32px; }
+  .footer-bottom { margin-top: 40px; flex-direction: column; align-items: flex-start; }
+}
+@media (max-width: 760px) {
+  .cta-title { font-size: 30px; }
+}

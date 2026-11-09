@@ -1,0 +1,46 @@
+:root {
+  /* Palette — champagne gold · warm ivory · sand · bronze (matches the water grade) */
+  --champagne: #d6b77a;
+  --ivory: #f5f0e5;
+  --gold-light: #fce8b0;
+  --sand: #c8b99f;
+  --bronze: #8d7961;
+
+  --sky-zenith: #ebe6dc;
+  --sky-mid: #f2efe8;
+  --sky-horizon: #f9f7f2;   /* = water shader horizon/fog colour (uHorizon) */
+  /* Section 2 (wallet) — continues from the hero's foreground water tone */
+  --s2-top: #efe9dc;
+  --s2-mid: #f4f0e8;
+  --s2-base: #f2eee6;
+  --s2-floor: #e9e4da;
+
+  /* Section 4 — product palette */
+  --brand-gold: #dab066;     /* champagne gold accent */
+  --paper: #f7f4ee;          /* warm ivory (section background) */
+  --champagne-soft: #ede5d8; /* card surfaces + subtle borders */
+  --graphite: #252321;       /* typography + icons */
+  --graphite-muted: #6b6762; /* body text */
+
+  --sun-haze: rgba(252, 246, 232, 0.5);
+
+  --ink: #141414;           /* near-black, neutral (saturation 0) */
+  --ink-soft: #454545;           /* neutral grey, same lightness as before */
+  --ink-mute: #646464;
+  --hairline: rgba(20, 20, 20, 0.28);
+
+  /* Type */
+  --font-sans: "Gilroy", "Helvetica Neue", Arial, sans-serif;
+
+  /* Layout (desktop-first 1440 × 900) */
+  --gutter: 64px;
+  --nav-h: 96px;
+  --horizon: 42%;           /* set from script to the 3D horizon */
+
+  /* Stacking hierarchy */
+  --z-scene: 0;
+  --z-content: 1;
+  --z-nav: 2;
+
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+}

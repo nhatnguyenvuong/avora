@@ -1,0 +1,338 @@
+/* ── Section 5 — Security & trust ───────────────────────────────────────────
+   Same design system as Section 4 (tokens, type, card surface, radius, border, shadow,
+   icon tiles); different hierarchy: illustration on top, text anchored bottom-left.
+   Illustrations: white / ivory surfaces, graphite details, restrained champagne gold. */
+
+.security {
+  position: relative;
+  z-index: 2;                               /* above the fixed WebGL canvas, like Section 4 */
+  transform: translateZ(0);
+  background: var(--paper);
+  padding: 24px var(--gutter) clamp(112px, 15vh, 160px);
+}
+
+.sec-inner { max-width: 1180px; margin: 0 auto; }
+
+/* Intro — mirrors Section 4's intro */
+.sec-intro { text-align: center; margin: 0 auto; }
+.sec-intro .eyebrow {
+  margin-bottom: 24px;
+  padding-left: 0.24em;
+  letter-spacing: 0.24em;
+  color: var(--graphite-muted);
+}
+.sec-title {
+  font-weight: 300;
+  font-size: clamp(38px, min(4vw, 6.8vh), 64px);
+  line-height: 1.04;
+  letter-spacing: -0.035em;
+  color: var(--graphite);
+  white-space: nowrap;                      /* one line where the viewport allows */
+}
+.sec-title-accent { color: var(--brand-gold); }
+.sec-lede {
+  max-width: 540px;
+  margin: 28px auto 0;
+  font-size: 18px;
+  line-height: 1.55;
+  color: var(--graphite-muted);
+  text-wrap: balance;
+}
+
+/* Grid — 3 equal cards, then 2 wider ones (6-column track) */
+.sec-grid {
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  /* no fixed heights: each row is as tall as its content (cards in a row share the row height) */
+  gap: 20px;
+  margin-top: clamp(40px, 5.5vh, 56px);
+}
+.sec-card { grid-column: span 2; }
+.sec-card-wide { grid-column: span 3; }
+
+/* Card surface — identical to Section 4's cards */
+.sec-card {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  padding: 24px;
+  border-radius: 18px;
+  background: color-mix(in srgb, var(--champagne-soft) 55%, var(--paper));
+  border: 1px solid var(--champagne-soft);
+  box-shadow: 0 1px 2px rgba(37, 35, 33, 0.04), 0 8px 24px -14px rgba(37, 35, 33, 0.14);
+  overflow: hidden;
+}
+
+/* upper area: the illustration, centred, contained */
+.sec-ill {                                 /* white frame — same treatment as Section 4's UI panels */
+  position: relative;
+  height: 236px;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  border-radius: 14px;
+  background: #fff;
+  border: 1px solid rgba(37, 35, 33, 0.06);
+  box-shadow: 0 1px 2px rgba(37, 35, 33, 0.04), 0 14px 28px -22px rgba(37, 35, 33, 0.22);
+}
+
+/* lower area: icon tile + heading + description, bottom-left */
+.sec-content {
+  padding-top: 28px;
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+}
+.sec-icon {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 44px;                              /* shared icon tile — same as Section 4 */
+  height: 44px;
+  border-radius: 12px;
+  background: #fff;
+  border: 1px solid var(--champagne-soft);
+}
+.sec-icon svg {
+  width: 22px;
+  height: 22px;
+  fill: none;
+  stroke: var(--brand-gold);
+  stroke-width: 1.6;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.sec-card-title {
+  font-weight: 500;
+  font-size: 20px;
+  line-height: 1.25;
+  letter-spacing: -0.02em;
+  color: var(--graphite);
+}
+.sec-card-text {
+  margin-top: 8px;
+  font-size: 15px;
+  line-height: 1.55;
+  color: var(--graphite-muted);
+}
+
+/* ── Illustration parts (shared) ── */
+.ill-sheet {
+  position: absolute;
+  border-radius: 14px;
+  background: #fff;
+  border: 1px solid rgba(37, 35, 33, 0.06);
+  box-shadow: 0 1px 2px rgba(37, 35, 33, 0.04), 0 18px 32px -22px rgba(37, 35, 33, 0.28);
+}
+.ill-line {
+  display: block;
+  height: 7px;
+  border-radius: 4px;
+  background: var(--champagne-soft);
+}
+.ill-line + .ill-line { margin-top: 10px; }
+.ill-line-strong { background: rgba(37, 35, 33, 0.16); }
+
+/* 01 — data protection: layered documents + lock */
+.ill-data .ill-sheet-back {
+  width: 168px; height: 124px;
+  transform: translate(26px, -22px);
+  background: var(--paper);
+}
+.ill-data .ill-sheet-front {
+  width: 168px; height: 124px;
+  padding: 22px 20px;
+  transform: translate(-6px, 6px);
+}
+.ill-lock {
+  position: absolute;
+  display: grid;
+  place-items: center;
+  width: 64px; height: 64px;
+  border-radius: 18px;
+  background: #fff;
+  border: 1px solid rgba(37, 35, 33, 0.06);
+  box-shadow: 0 1px 2px rgba(37, 35, 33, 0.05), 0 16px 28px -16px rgba(37, 35, 33, 0.35);
+  transform: translate(64px, 46px);
+}
+.ill-lock svg { width: 38px; height: 38px; }
+
+/* 02 — account security: sign-in fields */
+.ill-form {
+  width: min(250px, 86%);
+  padding: 14px;
+  border-radius: 16px;
+  background: var(--paper);
+  border: 1px solid rgba(37, 35, 33, 0.06);
+  box-shadow: 0 18px 32px -24px rgba(37, 35, 33, 0.3);
+}
+.ill-field {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  height: 46px;
+  padding: 0 12px;
+  border-radius: 11px;
+  background: #fff;
+  border: 1px solid rgba(37, 35, 33, 0.07);
+}
+.ill-field + .ill-field { margin-top: 10px; }
+.ill-field-icon {
+  width: 18px; height: 18px;
+  fill: none; stroke: var(--graphite); stroke-opacity: 0.55;
+  stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round;
+}
+.ill-field-text { font-size: 14px; color: var(--graphite); letter-spacing: 0.01em; }
+.ill-dots { display: flex; gap: 5px; }
+.ill-dots i { width: 6px; height: 6px; border-radius: 50%; background: var(--graphite); }
+.ill-check {
+  margin-left: auto;
+  display: grid; place-items: center;
+  width: 24px; height: 24px; border-radius: 50%;
+  background: var(--brand-gold);
+}
+.ill-check svg { width: 15px; height: 15px; fill: none; stroke: #fff; stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; }
+
+/* 03 — two-factor: phone with a six-digit code (cropped at the bottom of the illustration area) */
+.ill-2fa { place-items: start center; }
+.ill-phone {
+  position: relative;
+  margin-top: 26px;
+  width: 168px;
+  height: 260px;
+  padding: 34px 14px 0;
+  border-radius: 30px;
+  background: #fbf9f5;
+  border: 5px solid var(--graphite);
+  box-shadow: 0 22px 36px -24px rgba(37, 35, 33, 0.45);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.ill-notch {
+  position: absolute; top: 9px; left: 50%;
+  width: 46px; height: 12px; margin-left: -23px;
+  border-radius: 8px; background: var(--graphite);
+}
+.ill-shield svg { width: 34px; height: 34px; display: block; }
+.ill-shield .s { fill: var(--brand-gold); }
+.ill-shield .c { fill: none; stroke: #fff; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+.ill-code-label { margin-top: 10px; font-size: 10px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--graphite-muted); }
+.ill-code { margin-top: 10px; display: flex; gap: 4px; }
+.ill-code b {
+  display: grid; place-items: center;
+  width: 20px; height: 28px;
+  border-radius: 6px;
+  background: #fff;
+  border: 1px solid rgba(37, 35, 33, 0.08);
+  font-size: 14px; font-weight: 500; color: var(--graphite);
+  font-variant-numeric: tabular-nums;
+}
+
+/* 04 — transaction monitoring: activity curve with one highlighted point */
+.ill-chart { position: relative; width: min(440px, 92%); height: 150px; }
+.ill-chart svg { display: block; width: 100%; height: 100%; overflow: visible; }
+.mon-grid { fill: none; stroke: rgba(37, 35, 33, 0.07); stroke-width: 1; vector-effect: non-scaling-stroke; stroke-dasharray: 3 5; }
+.mon-area { fill: url(#mon-fill); }
+.mon-line { fill: none; stroke: var(--brand-gold); stroke-width: 2; stroke-linecap: round; vector-effect: non-scaling-stroke; }
+.mon-point {
+  position: absolute;
+  width: 12px; height: 12px; margin: -6px 0 0 -6px;
+  border-radius: 50%;
+  background: var(--graphite);
+  border: 2.5px solid #fff;
+  box-shadow: 0 0 0 7px rgba(218, 176, 102, 0.18), 0 4px 10px rgba(37, 35, 33, 0.2);
+}
+
+/* 05 — regulatory: document with a gold seal */
+.ill-reg .ill-doc-back {
+  width: 196px; height: 140px;
+  transform: translate(24px, -16px);
+  background: var(--paper);
+}
+.ill-reg .ill-doc {
+  width: 196px; height: 140px;
+  padding: 24px 22px;
+  transform: translate(-8px, 6px);
+}
+.ill-seal {
+  position: absolute;
+  transform: translate(78px, 52px);
+  filter: drop-shadow(0 8px 10px rgba(37, 35, 33, 0.18));
+}
+.ill-seal svg { display: block; width: 54px; height: 54px; }
+
+/* Entrance — same reveal as Section 4 */
+.sec-js .security [data-reveal] {
+  opacity: 0;
+  transform: translateY(24px);
+  transition: opacity 0.9s var(--ease-out), transform 0.9s var(--ease-out);
+  transition-delay: calc(var(--i, 0) * 110ms);
+}
+.sec-js .security [data-reveal].is-in { opacity: 1; transform: none; }
+@media (prefers-reduced-motion: reduce) {
+  .sec-js .security [data-reveal] { transform: none; transition: opacity 0.4s linear; }
+}
+
+/* Tablet — two columns; the fifth card spans both */
+@media (max-width: 1080px) {
+  .sec-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
+  .sec-card, .sec-card-wide { grid-column: span 1; }
+  .sec-card:last-child { grid-column: 1 / -1; }
+  .sec-content { flex-direction: column; }   /* icon above the text: full width for the headings */
+}
+
+/* Mobile — stacked */
+@media (max-width: 640px) {
+  .security { padding-bottom: 96px; }
+  .sec-lede { margin-top: 20px; font-size: 16px; }
+  .sec-grid { grid-template-columns: 1fr; margin-top: 32px; }
+  .sec-card:last-child { grid-column: auto; }
+  .sec-card { padding: 24px; }
+  .sec-ill { height: 210px; }
+  .sec-content { padding-top: 22px; gap: 14px; flex-direction: row; }
+  .sec-card-title { font-size: 19px; }
+}
+@media (max-width: 1000px) {
+  .sec-title { white-space: normal; text-wrap: balance; }
+}
+@media (max-width: 760px) {
+  .sec-title { font-size: 34px; }
+}
+@media (max-width: 640px) {
+  .sec-card-text { min-height: 0; }
+}
+
+/* Warm glow inside each white frame: a soft champagne light behind the illustration,
+   and a gentle golden halo on its layers, so the frame doesn't feel empty. */
+.sec-ill::before {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: min(360px, 92%);
+  aspect-ratio: 1.45;
+  transform: translate(-50%, -50%);
+  background: radial-gradient(closest-side,
+    rgba(218, 176, 102, 0.34),
+    rgba(218, 176, 102, 0.13) 55%,
+    rgba(218, 176, 102, 0) 100%);
+  pointer-events: none;
+}
+.sec-card-wide .sec-ill::before { width: min(460px, 70%); aspect-ratio: 2.4; }
+.sec-ill > * { position: relative; }
+.sec-ill > .ill-sheet, .sec-ill > .ill-lock, .sec-ill > .ill-seal { position: absolute; }
+
+.ill-sheet,
+.ill-lock,
+.ill-form {
+  box-shadow: 0 1px 2px rgba(37, 35, 33, 0.04),
+              0 18px 32px -22px rgba(37, 35, 33, 0.26),
+              0 0 44px -4px rgba(218, 176, 102, 0.45);
+}
+.ill-phone {
+  box-shadow: 0 22px 36px -24px rgba(37, 35, 33, 0.45),
+              0 0 52px -2px rgba(218, 176, 102, 0.45);
+}
+.mon-line { filter: drop-shadow(0 0 8px rgba(218, 176, 102, 0.75)); }
+.ill-seal { filter: drop-shadow(0 8px 10px rgba(37, 35, 33, 0.18)) drop-shadow(0 0 10px rgba(218, 176, 102, 0.45)); }

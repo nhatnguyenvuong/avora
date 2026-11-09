@@ -1,0 +1,471 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <title>AVORA — A global card that moves with you</title>
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg width="418" height="250" viewBox="0 0 418 250" fill="none" xmlns="http://www.w3.org/2000/svg"%3E%0A%3Cpath d="M143.159 198.931C143.159 198.931 215.04 117.636 297.795 142.094C364.641 161.85 418 249.117 418 249.117C418 249.117 372 249.117 341.89 249.117C256.72 118.529 143.159 198.931 143.159 198.931Z" fill="%23141414"/%3E%0A%3Cpath d="M351.555 151.768C351.555 151.768 313.5 113.675 257.928 113.675C202.355 113.675 170.945 151.336 149.199 177.768C123.829 208.605 71.2775 249.117 0 249.117C78.526 171.722 152.124 0 210.812 0C269.5 0 297.795 79.227 351.555 151.768Z" fill="%23141414"/%3E%0A%3C/svg%3E" />
+    <link rel="stylesheet" href="./src/styles/fonts.css?v=47" />
+    <link rel="stylesheet" href="./src/styles/tokens.css?v=47" />
+    <link rel="stylesheet" href="./src/styles/base.css?v=50" />
+    <link rel="stylesheet" href="./src/styles/background.css?v=47" />
+    <link rel="stylesheet" href="./src/styles/content.css?v=52" />
+    <link rel="stylesheet" href="./src/styles/nav.css?v=47" />
+    <link rel="stylesheet" href="./src/styles/ecosystem.css?v=51" />
+    <link rel="stylesheet" href="./src/styles/security.css?v=47" />
+    <link rel="stylesheet" href="./src/styles/closing.css?v=50" />
+  </head>
+  <body>
+    <!--
+      PAGE — stacking order (bottom → top)
+      z 0  body + sections 2–3            backdrops (the hero sky is drawn in the canvas)
+      z 1  #scene (fixed)                WebGL: water + halo (scrolls with the hero) · card + wallet
+      z 2  .hero                         hero copy + navigation
+    -->
+    <!-- behind everything: the fixed WebGL canvas (hero sky + water + objects) -->
+    <canvas class="scene-canvas" id="scene"
+      aria-label="An AVORA card floating above calm water. Scroll to place it in the wallet."></canvas>
+    <p class="scene-fallback" id="scene-fallback" hidden>WebGL isn't available in this browser, so the 3D scene can't be drawn.</p>
+
+    <section class="hero" id="hero" data-scroll-section="hero">
+      <div class="layer layer-content" data-scroll-layer="content">
+        <ul class="zone zone-tl feature-list">
+          <li>Multi-currency management</li>
+          <li>One connected wallet</li>
+          <li>Global spending experience</li>
+        </ul>
+
+        <p class="zone zone-tr lede">
+          Manage multiple currencies and access your money through one connected financial experience.
+        </p>
+
+        <div class="zone zone-bl hero-copy">
+          <p class="eyebrow">A new perspective on global finance</p>
+          <h1 class="headline">
+            <span class="headline-line">One wallet.</span>
+            <span class="headline-line">Every currency.</span>
+          </h1>
+        </div>
+
+        <button class="card-flip" id="card-flip" type="button" aria-pressed="false">Turn the card over</button>
+
+        <div class="zone zone-br hero-actions">
+          <a class="btn btn-outline" href="#">
+            Discover AVORA
+            <span class="btn-arrow" aria-hidden="true">→</span>
+          </a>
+        </div>
+      </div>
+
+      <header class="layer-nav" data-scroll-layer="nav">
+        <nav class="nav" aria-label="Primary">
+          <a class="brand" href="#" aria-label="AVORA home">
+            <svg class="brand-logo" viewBox="0 0 1458 251" aria-hidden="true" focusable="false"><path d="M497.937 183.333L554.937 66.6647H575.938L632.605 183.333H612.772L573.604 102.999C572.604 100.888 571.604 98.8319 570.604 96.8319C569.604 94.8319 568.604 92.8318 567.604 90.8318C566.715 88.8318 565.827 86.7206 564.938 84.4984C564.049 82.2761 563.16 79.8316 562.271 77.1649L567.604 76.9982C566.604 79.665 565.604 82.165 564.604 84.4984C563.715 86.8317 562.771 89.054 561.771 91.1651C560.771 93.2763 559.771 95.3874 558.771 97.4986C557.771 99.4986 556.771 101.554 555.771 103.665L516.937 183.333H497.937Z" fill="currentColor"/><path d="M746.273 183.333L692.438 66.6647H712.772L743.939 136.166C744.606 137.721 745.661 139.999 747.106 142.999C748.55 145.888 750.106 149.166 751.773 152.833C753.439 156.5 755.051 160.111 756.606 163.666C758.162 167.222 759.384 170.389 760.273 173.166L754.939 173.333C756.162 170 757.717 166.111 759.606 161.666C761.606 157.111 763.551 152.611 765.44 148.166C767.44 143.61 769.106 139.721 770.44 136.499L799.273 66.6647H820.44L767.94 183.333H746.273Z" fill="currentColor"/><path d="M964.255 185C953.922 185 944.477 183.5 935.922 180.5C927.366 177.389 919.921 173.111 913.588 167.666C907.254 162.111 902.365 155.722 898.921 148.499C895.476 141.166 893.754 133.333 893.754 124.999C893.754 116.666 895.476 108.888 898.921 101.665C902.365 94.3319 907.254 87.9429 913.588 82.4983C919.921 76.9427 927.366 72.6648 935.922 69.6648C944.477 66.5536 953.922 64.998 964.255 64.998C974.478 64.998 983.867 66.5536 992.423 69.6648C1000.98 72.6648 1008.42 76.9427 1014.76 82.4983C1021.09 87.9429 1025.98 94.3319 1029.42 101.665C1032.98 108.888 1034.76 116.666 1034.76 124.999C1034.76 133.333 1032.98 141.166 1029.42 148.499C1025.98 155.722 1021.09 162.111 1014.76 167.666C1008.42 173.111 1000.98 177.389 992.423 180.5C983.867 183.5 974.478 185 964.255 185ZM964.255 167.5C971.922 167.5 978.922 166.444 985.256 164.333C991.589 162.111 997.089 159.111 1001.76 155.333C1006.42 151.444 1010.03 146.944 1012.59 141.833C1015.15 136.61 1016.42 130.999 1016.42 124.999C1016.42 118.999 1015.15 113.443 1012.59 108.332C1010.03 103.11 1006.42 98.6097 1001.76 94.8319C997.089 90.9429 991.589 87.9429 985.256 85.8317C978.922 83.6095 971.922 82.4983 964.255 82.4983C956.589 82.4983 949.533 83.6095 943.088 85.8317C936.755 87.9429 931.255 90.9429 926.588 94.8319C921.921 98.6097 918.31 103.11 915.755 108.332C913.31 113.443 912.088 118.999 912.088 124.999C912.088 130.999 913.31 136.61 915.755 141.833C918.31 146.944 921.921 151.444 926.588 155.333C931.255 159.111 936.755 162.111 943.088 164.333C949.533 166.444 956.589 167.5 964.255 167.5Z" fill="currentColor"/><path d="M1323.15 183.333L1380.15 66.6647H1401.15L1457.81 183.333H1437.98L1398.81 102.999C1397.81 100.888 1396.81 98.8319 1395.81 96.8319C1394.81 94.8319 1393.81 92.8318 1392.81 90.8318C1391.92 88.8318 1391.04 86.7206 1390.15 84.4984C1389.26 82.2761 1388.37 79.8316 1387.48 77.1649L1392.81 76.9982C1391.81 79.665 1390.81 82.165 1389.81 84.4984C1388.92 86.8317 1387.98 89.054 1386.98 91.1651C1385.98 93.2763 1384.98 95.3874 1383.98 97.4986C1382.98 99.4986 1381.98 101.554 1380.98 103.665L1342.15 183.333H1323.15Z" fill="currentColor"/><path d="M1128.02 183.333V66.6647H1196.19C1203.08 66.6647 1209.35 68.2759 1215.02 71.4982C1220.8 74.6093 1225.41 78.8872 1228.85 84.3317C1232.3 89.7762 1234.02 95.8319 1234.02 102.499C1234.02 109.499 1232.13 115.888 1228.35 121.666C1224.58 127.332 1219.58 131.888 1213.35 135.333C1207.88 138.265 1201.13 139.693 1194.52 139.994L1237.38 183.333H1213.57L1150.47 122.999H1168.33H1173.09H1191.82C1196.04 122.999 1199.3 122.055 1202.85 120.166C1206.52 118.277 1209.41 115.777 1211.52 112.665C1213.74 109.554 1214.85 106.165 1214.85 102.499C1214.85 99.0542 1213.74 95.943 1211.52 93.1652C1209.41 90.3874 1206.52 88.1651 1202.85 86.4984C1199.3 84.8317 1195.41 83.9984 1191.19 83.9984H1146.02V122.999V183.333H1128.02Z" fill="currentColor"/><path d="M143.159 198.931C143.159 198.931 215.04 117.636 297.795 142.094C364.641 161.85 418 249.117 418 249.117C418 249.117 372 249.117 341.89 249.117C256.72 118.529 143.159 198.931 143.159 198.931Z" fill="currentColor"/><path d="M351.555 151.768C351.555 151.768 313.5 113.675 257.928 113.675C202.355 113.675 170.945 151.336 149.199 177.768C123.829 208.605 71.2775 249.117 0 249.117C78.526 171.722 152.124 0 210.812 0C269.5 0 297.795 79.227 351.555 151.768Z" fill="currentColor"/></svg>
+          </a>
+          <ul class="nav-links">
+            <li><a href="#">The Platform</a></li>
+            <li><a href="#">Benefits</a></li>
+            <li><a href="#">Pricing</a></li>
+            <li><a href="#">About AVORA</a></li>
+          </ul>
+          <div class="nav-actions">
+            <a class="btn btn-dark" href="#">Get Started</a>
+          </div>
+        </nav>
+      </header>
+    </section>
+
+    <!-- Section 2 — Beyond Borders: a full-viewport stage, pinned for 100vh (200vh of scroll in all).
+         The card turns behind these two messages; no wallet yet. -->
+    <section class="journey-section" id="journey" aria-label="Beyond borders" data-scroll-section="journey">
+      <div class="journey-stage" id="journey-stage">
+        <article class="story story-01" id="story-01">
+          <p class="eyebrow">A world without boundaries</p>
+          <h2 class="story-title">Your world doesn&rsquo;t stop at borders.</h2>
+          <p class="story-text">Your money shouldn&rsquo;t be limited by them.</p>
+        </article>
+
+        <article class="story story-02" id="story-02">
+          <p class="eyebrow">One connected experience</p>
+          <h2 class="story-title">Different currencies. Different places. One perspective.</h2>
+          <p class="story-text">Your financial life moves across borders. Managing it shouldn&rsquo;t feel disconnected.</p>
+        </article>
+      </div>
+    </section>
+
+    <!-- Section 3 — The Destination: this stage is pinned while the card slides into the wallet -->
+    <section class="destination-section" id="destination" aria-label="Introducing AVORA" data-scroll-section="destination">
+      <div class="wallet-stage" id="wallet-stage">
+        <!-- background: ambient light, orbital lines, the reflective floor and its ripples -->
+        <div class="wallet-glow" aria-hidden="true"></div>
+        <svg class="s3-orbits" viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+          <defs>
+            <linearGradient id="orbit-a" gradientUnits="userSpaceOnUse" x1="330" y1="0" x2="1270" y2="0">
+              <stop offset="0" stop-color="#d6b77a" stop-opacity="0" />
+              <stop offset="0.3" stop-color="#d6b77a" stop-opacity="0.45" />
+              <stop offset="0.72" stop-color="#fce8b0" stop-opacity="0.95" />
+              <stop offset="1" stop-color="#d6b77a" stop-opacity="0" />
+            </linearGradient>
+            <linearGradient id="orbit-b" gradientUnits="userSpaceOnUse" x1="120" y1="560" x2="700" y2="90">
+              <stop offset="0" stop-color="#d6b77a" stop-opacity="0" />
+              <stop offset="0.55" stop-color="#fce8b0" stop-opacity="0.85" />
+              <stop offset="1" stop-color="#d6b77a" stop-opacity="0" />
+            </linearGradient>
+            <linearGradient id="orbit-c" gradientUnits="userSpaceOnUse" x1="1040" y1="660" x2="1540" y2="210">
+              <stop offset="0" stop-color="#d6b77a" stop-opacity="0" />
+              <stop offset="0.5" stop-color="#fce8b0" stop-opacity="0.9" />
+              <stop offset="1" stop-color="#d6b77a" stop-opacity="0" />
+            </linearGradient>
+            <filter id="orbit-soft" x="-10%" y="-10%" width="120%" height="120%"><feGaussianBlur stdDeviation="3" /></filter>
+          </defs>
+          <g class="orbit orbit-1">
+            <path d="M 330 800 A 470 470 0 0 1 1270 800" stroke="url(#orbit-a)" stroke-width="7" filter="url(#orbit-soft)" opacity="0.35" />
+            <path d="M 330 800 A 470 470 0 0 1 1270 800" stroke="url(#orbit-a)" stroke-width="1.2" />
+          </g>
+          <g class="orbit orbit-2">
+            <path d="M 120 560 C 260 330, 430 170, 700 90" stroke="url(#orbit-b)" stroke-width="6" filter="url(#orbit-soft)" opacity="0.3" />
+            <path d="M 120 560 C 260 330, 430 170, 700 90" stroke="url(#orbit-b)" stroke-width="1.1" />
+          </g>
+          <g class="orbit orbit-3">
+            <path d="M 1040 660 C 1260 560, 1420 400, 1540 210" stroke="url(#orbit-c)" stroke-width="6" filter="url(#orbit-soft)" opacity="0.3" />
+            <path d="M 1040 660 C 1260 560, 1420 400, 1540 210" stroke="url(#orbit-c)" stroke-width="1.1" />
+          </g>
+        </svg>
+        <div class="s3-floor" aria-hidden="true">
+          <div class="s3-pool"></div>
+          <div class="s3-ripples">
+            <span class="ripple"></span><span class="ripple"></span><span class="ripple"></span><span class="ripple"></span>
+            <span class="ripple ripple-seat" id="seat-ripple"></span>
+          </div>
+        </div>
+        <div class="wallet-shadow" aria-hidden="true"></div>
+        <div class="wallet-anchor" id="wallet-anchor" aria-hidden="true"></div>
+
+        <!-- final message: revealed by the scroll timeline once the card has settled -->
+        <div class="finale" id="final-message">
+          <p class="eyebrow finale-eyebrow">Introducing AVORA</p>
+          <h2 class="finale-title"><span class="finale-accent">Your finances</span>, within reach.</h2>
+          <p class="finale-text">Bring your cards and financial tools together in one wallet, with convenient access whenever you need them.</p>
+        </div>
+        <div class="finale-actions" id="final-cta">
+          <a class="btn btn-dark" href="#">Explore the AVORA experience <span class="btn-arrow" aria-hidden="true">&rarr;</span></a>
+        </div>
+      </div>
+    </section>
+
+    <!-- Section 4 — The AVORA ecosystem: a new chapter. Plain document flow, no 3D, no scroll story. -->
+    <section class="ecosystem" id="ecosystem" aria-labelledby="eco-title" data-scroll-section="ecosystem">
+      <div class="eco-inner">
+        <header class="eco-intro" data-reveal>
+          <p class="eyebrow">The AVORA ecosystem</p>
+          <h2 class="eco-title" id="eco-title">Built around the way you use <span class="eco-title-accent">money.</span></h2>
+          <p class="eco-lede">Three essential capabilities for managing currencies, spending globally, and keeping your financial tools connected.</p>
+        </header>
+
+        <div class="eco-cards">
+          <!-- 02 — Global spending -->
+          <article class="eco-card" data-reveal style="--i: 0">
+            <div class="eco-copy">
+              <span class="eco-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="M3.5 12h17"/><path d="M12 3.5c2.4 2.3 3.6 5.2 3.6 8.5s-1.2 6.2-3.6 8.5c-2.4-2.3-3.6-5.2-3.6-8.5s1.2-6.2 3.6-8.5z"/></svg>
+              </span>
+              <h3 class="eco-card-title">Global<br />Spending</h3>
+              <p class="eco-card-text">Use your money across borders, online and in the real world.</p>
+            </div>
+            <div class="eco-visual" aria-hidden="true">
+              <div class="eco-panel map-panel">
+                <svg class="map" viewBox="-1 -1 73 37" preserveAspectRatio="xMidYMid meet">
+                  <path class="map-dots" d="M4.5 0h0M12.5 0h0M13.5 0h0M14.5 0h0M16.5 0h0M18.5 0h0M19.5 0h0M20.5 0h0M25.5 0h0M26.5 0h0M27.5 0h0M28.5 0h0M29.5 0h0M40.5 0h0M46.5 0h0M49.5 0h0M50.5 0h0M51.5 0h0M52.5 0h0M53.5 0h0M54.5 0h0M55.5 0h0M56.5 0h0M57.5 0h0M58.5 0h0M59.5 0h0M60.5 0h0M62.5 0h0M63.5 0h0M64.5 0h0M65.5 0h0M4 0.87h0M5 0.87h0M6 0.87h0M7 0.87h0M9 0.87h0M10 0.87h0M13 0.87h0M14 0.87h0M15 0.87h0M16 0.87h0M17 0.87h0M19 0.87h0M21 0.87h0M22 0.87h0M25 0.87h0M26 0.87h0M27 0.87h0M28 0.87h0M29 0.87h0M30 0.87h0M40 0.87h0M41 0.87h0M42 0.87h0M48 0.87h0M49 0.87h0M51 0.87h0M52 0.87h0M53 0.87h0M54 0.87h0M55 0.87h0M56 0.87h0M57 0.87h0M58 0.87h0M59 0.87h0M60 0.87h0M61 0.87h0M62 0.87h0M63 0.87h0M64 0.87h0M65 0.87h0M66 0.87h0M67 0.87h0M68 0.87h0M70 0.87h0M3.5 1.73h0M4.5 1.73h0M5.5 1.73h0M6.5 1.73h0M7.5 1.73h0M8.5 1.73h0M9.5 1.73h0M10.5 1.73h0M11.5 1.73h0M12.5 1.73h0M14.5 1.73h0M17.5 1.73h0M18.5 1.73h0M20.5 1.73h0M21.5 1.73h0M25.5 1.73h0M26.5 1.73h0M27.5 1.73h0M28.5 1.73h0M38.5 1.73h0M39.5 1.73h0M40.5 1.73h0M41.5 1.73h0M42.5 1.73h0M44.5 1.73h0M45.5 1.73h0M46.5 1.73h0M47.5 1.73h0M48.5 1.73h0M49.5 1.73h0M50.5 1.73h0M51.5 1.73h0M52.5 1.73h0M53.5 1.73h0M54.5 1.73h0M55.5 1.73h0M56.5 1.73h0M57.5 1.73h0M58.5 1.73h0M59.5 1.73h0M60.5 1.73h0M61.5 1.73h0M62.5 1.73h0M63.5 1.73h0M64.5 1.73h0M65.5 1.73h0M66.5 1.73h0M67.5 1.73h0M68.5 1.73h0M69.5 1.73h0M70.5 1.73h0M0 2.6h0M1 2.6h0M3 2.6h0M4 2.6h0M5 2.6h0M6 2.6h0M7 2.6h0M8 2.6h0M9 2.6h0M10 2.6h0M11 2.6h0M12 2.6h0M13 2.6h0M14 2.6h0M15 2.6h0M16 2.6h0M17 2.6h0M18 2.6h0M21 2.6h0M22 2.6h0M23 2.6h0M25 2.6h0M26 2.6h0M27 2.6h0M28 2.6h0M31 2.6h0M39 2.6h0M40 2.6h0M41 2.6h0M42 2.6h0M43 2.6h0M44 2.6h0M45 2.6h0M46 2.6h0M47 2.6h0M48 2.6h0M49 2.6h0M50 2.6h0M51 2.6h0M52 2.6h0M53 2.6h0M54 2.6h0M55 2.6h0M56 2.6h0M57 2.6h0M58 2.6h0M59 2.6h0M60 2.6h0M61 2.6h0M62 2.6h0M63 2.6h0M64 2.6h0M65 2.6h0M66 2.6h0M67 2.6h0M68 2.6h0M69 2.6h0M70 2.6h0M3.5 3.46h0M4.5 3.46h0M5.5 3.46h0M6.5 3.46h0M7.5 3.46h0M8.5 3.46h0M9.5 3.46h0M10.5 3.46h0M11.5 3.46h0M12.5 3.46h0M13.5 3.46h0M14.5 3.46h0M15.5 3.46h0M16.5 3.46h0M17.5 3.46h0M18.5 3.46h0M20.5 3.46h0M21.5 3.46h0M22.5 3.46h0M25.5 3.46h0M26.5 3.46h0M31.5 3.46h0M32.5 3.46h0M38.5 3.46h0M39.5 3.46h0M40.5 3.46h0M41.5 3.46h0M43.5 3.46h0M44.5 3.46h0M45.5 3.46h0M46.5 3.46h0M47.5 3.46h0M48.5 3.46h0M49.5 3.46h0M50.5 3.46h0M51.5 3.46h0M52.5 3.46h0M53.5 3.46h0M54.5 3.46h0M55.5 3.46h0M56.5 3.46h0M57.5 3.46h0M58.5 3.46h0M59.5 3.46h0M60.5 3.46h0M61.5 3.46h0M62.5 3.46h0M63.5 3.46h0M64.5 3.46h0M65.5 3.46h0M66.5 3.46h0M67.5 3.46h0M68.5 3.46h0M69.5 3.46h0M70.5 3.46h0M3 4.33h0M4 4.33h0M5 4.33h0M6 4.33h0M7 4.33h0M8 4.33h0M9 4.33h0M10 4.33h0M11 4.33h0M12 4.33h0M13 4.33h0M14 4.33h0M15 4.33h0M16 4.33h0M17 4.33h0M19 4.33h0M22 4.33h0M26 4.33h0M27 4.33h0M37 4.33h0M38 4.33h0M39 4.33h0M40 4.33h0M41 4.33h0M42 4.33h0M43 4.33h0M44 4.33h0M45 4.33h0M46 4.33h0M47 4.33h0M48 4.33h0M49 4.33h0M50 4.33h0M51 4.33h0M52 4.33h0M53 4.33h0M54 4.33h0M55 4.33h0M56 4.33h0M57 4.33h0M58 4.33h0M59 4.33h0M60 4.33h0M61 4.33h0M62 4.33h0M63 4.33h0M64 4.33h0M65 4.33h0M66 4.33h0M67 4.33h0M68 4.33h0M69 4.33h0M70 4.33h0M3.5 5.2h0M4.5 5.2h0M5.5 5.2h0M7.5 5.2h0M8.5 5.2h0M9.5 5.2h0M10.5 5.2h0M11.5 5.2h0M12.5 5.2h0M13.5 5.2h0M14.5 5.2h0M15.5 5.2h0M16.5 5.2h0M20.5 5.2h0M21.5 5.2h0M26.5 5.2h0M37.5 5.2h0M38.5 5.2h0M40.5 5.2h0M41.5 5.2h0M42.5 5.2h0M43.5 5.2h0M44.5 5.2h0M45.5 5.2h0M46.5 5.2h0M47.5 5.2h0M48.5 5.2h0M49.5 5.2h0M50.5 5.2h0M51.5 5.2h0M52.5 5.2h0M53.5 5.2h0M54.5 5.2h0M55.5 5.2h0M56.5 5.2h0M57.5 5.2h0M58.5 5.2h0M59.5 5.2h0M60.5 5.2h0M61.5 5.2h0M62.5 5.2h0M63.5 5.2h0M64.5 5.2h0M65.5 5.2h0M68.5 5.2h0M9 6.06h0M10 6.06h0M11 6.06h0M12 6.06h0M13 6.06h0M14 6.06h0M15 6.06h0M16 6.06h0M17 6.06h0M21 6.06h0M22 6.06h0M23 6.06h0M37 6.06h0M38 6.06h0M41 6.06h0M42 6.06h0M43 6.06h0M44 6.06h0M45 6.06h0M46 6.06h0M47 6.06h0M48 6.06h0M49 6.06h0M50 6.06h0M51 6.06h0M52 6.06h0M53 6.06h0M54 6.06h0M55 6.06h0M56 6.06h0M57 6.06h0M58 6.06h0M59 6.06h0M60 6.06h0M61 6.06h0M62 6.06h0M63 6.06h0M67 6.06h0M3.5 6.93h0M9.5 6.93h0M10.5 6.93h0M11.5 6.93h0M12.5 6.93h0M13.5 6.93h0M14.5 6.93h0M15.5 6.93h0M16.5 6.93h0M17.5 6.93h0M20.5 6.93h0M21.5 6.93h0M22.5 6.93h0M34.5 6.93h0M40.5 6.93h0M41.5 6.93h0M42.5 6.93h0M43.5 6.93h0M44.5 6.93h0M45.5 6.93h0M46.5 6.93h0M47.5 6.93h0M48.5 6.93h0M49.5 6.93h0M50.5 6.93h0M51.5 6.93h0M52.5 6.93h0M53.5 6.93h0M54.5 6.93h0M55.5 6.93h0M56.5 6.93h0M57.5 6.93h0M58.5 6.93h0M59.5 6.93h0M60.5 6.93h0M61.5 6.93h0M62.5 6.93h0M66.5 6.93h0M67.5 6.93h0M10 7.79h0M11 7.79h0M12 7.79h0M13 7.79h0M14 7.79h0M15 7.79h0M16 7.79h0M17 7.79h0M18 7.79h0M19 7.79h0M20 7.79h0M21 7.79h0M22 7.79h0M23 7.79h0M24 7.79h0M34 7.79h0M35 7.79h0M37 7.79h0M38 7.79h0M39 7.79h0M40 7.79h0M41 7.79h0M42 7.79h0M43 7.79h0M44 7.79h0M45 7.79h0M46 7.79h0M47 7.79h0M48 7.79h0M49 7.79h0M50 7.79h0M51 7.79h0M52 7.79h0M53 7.79h0M54 7.79h0M55 7.79h0M56 7.79h0M57 7.79h0M58 7.79h0M59 7.79h0M60 7.79h0M61 7.79h0M62 7.79h0M63 7.79h0M67 7.79h0M10.5 8.66h0M11.5 8.66h0M12.5 8.66h0M13.5 8.66h0M14.5 8.66h0M15.5 8.66h0M16.5 8.66h0M17.5 8.66h0M18.5 8.66h0M19.5 8.66h0M20.5 8.66h0M21.5 8.66h0M22.5 8.66h0M23.5 8.66h0M36.5 8.66h0M37.5 8.66h0M38.5 8.66h0M39.5 8.66h0M40.5 8.66h0M41.5 8.66h0M42.5 8.66h0M43.5 8.66h0M44.5 8.66h0M45.5 8.66h0M46.5 8.66h0M47.5 8.66h0M48.5 8.66h0M49.5 8.66h0M50.5 8.66h0M51.5 8.66h0M52.5 8.66h0M53.5 8.66h0M54.5 8.66h0M55.5 8.66h0M56.5 8.66h0M57.5 8.66h0M58.5 8.66h0M59.5 8.66h0M60.5 8.66h0M61.5 8.66h0M62.5 8.66h0M11 9.53h0M12 9.53h0M13 9.53h0M14 9.53h0M15 9.53h0M16 9.53h0M17 9.53h0M18 9.53h0M19 9.53h0M20 9.53h0M21 9.53h0M22 9.53h0M24 9.53h0M25 9.53h0M35 9.53h0M36 9.53h0M37 9.53h0M38 9.53h0M39 9.53h0M40 9.53h0M41 9.53h0M42 9.53h0M43 9.53h0M44 9.53h0M45 9.53h0M46 9.53h0M47 9.53h0M48 9.53h0M49 9.53h0M50 9.53h0M51 9.53h0M52 9.53h0M53 9.53h0M54 9.53h0M55 9.53h0M56 9.53h0M57 9.53h0M58 9.53h0M59 9.53h0M60 9.53h0M61 9.53h0M62 9.53h0M63 9.53h0M11.5 10.39h0M12.5 10.39h0M13.5 10.39h0M14.5 10.39h0M15.5 10.39h0M16.5 10.39h0M17.5 10.39h0M18.5 10.39h0M19.5 10.39h0M20.5 10.39h0M21.5 10.39h0M35.5 10.39h0M36.5 10.39h0M37.5 10.39h0M38.5 10.39h0M39.5 10.39h0M40.5 10.39h0M43.5 10.39h0M44.5 10.39h0M46.5 10.39h0M47.5 10.39h0M48.5 10.39h0M49.5 10.39h0M50.5 10.39h0M51.5 10.39h0M52.5 10.39h0M53.5 10.39h0M54.5 10.39h0M55.5 10.39h0M56.5 10.39h0M57.5 10.39h0M58.5 10.39h0M59.5 10.39h0M60.5 10.39h0M61.5 10.39h0M62.5 10.39h0M11 11.26h0M12 11.26h0M13 11.26h0M14 11.26h0M15 11.26h0M16 11.26h0M17 11.26h0M18 11.26h0M19 11.26h0M20 11.26h0M21 11.26h0M34 11.26h0M35 11.26h0M36 11.26h0M38 11.26h0M40 11.26h0M41 11.26h0M42 11.26h0M44 11.26h0M45 11.26h0M47 11.26h0M48 11.26h0M49 11.26h0M50 11.26h0M51 11.26h0M52 11.26h0M53 11.26h0M54 11.26h0M55 11.26h0M56 11.26h0M57 11.26h0M58 11.26h0M59 11.26h0M60 11.26h0M61 11.26h0M11.5 12.12h0M12.5 12.12h0M13.5 12.12h0M14.5 12.12h0M15.5 12.12h0M16.5 12.12h0M17.5 12.12h0M18.5 12.12h0M19.5 12.12h0M20.5 12.12h0M34.5 12.12h0M41.5 12.12h0M42.5 12.12h0M43.5 12.12h0M44.5 12.12h0M46.5 12.12h0M47.5 12.12h0M48.5 12.12h0M49.5 12.12h0M50.5 12.12h0M51.5 12.12h0M52.5 12.12h0M53.5 12.12h0M54.5 12.12h0M55.5 12.12h0M56.5 12.12h0M57.5 12.12h0M58.5 12.12h0M60.5 12.12h0M63.5 12.12h0M12 12.99h0M13 12.99h0M14 12.99h0M15 12.99h0M16 12.99h0M17 12.99h0M18 12.99h0M19 12.99h0M20 12.99h0M35 12.99h0M36 12.99h0M37 12.99h0M42 12.99h0M43 12.99h0M44 12.99h0M45 12.99h0M46 12.99h0M47 12.99h0M48 12.99h0M49 12.99h0M50 12.99h0M51 12.99h0M52 12.99h0M53 12.99h0M54 12.99h0M55 12.99h0M56 12.99h0M57 12.99h0M58 12.99h0M59 12.99h0M62 12.99h0M63 12.99h0M12.5 13.86h0M13.5 13.86h0M14.5 13.86h0M15.5 13.86h0M16.5 13.86h0M17.5 13.86h0M18.5 13.86h0M34.5 13.86h0M35.5 13.86h0M36.5 13.86h0M37.5 13.86h0M38.5 13.86h0M39.5 13.86h0M40.5 13.86h0M41.5 13.86h0M42.5 13.86h0M43.5 13.86h0M44.5 13.86h0M45.5 13.86h0M46.5 13.86h0M47.5 13.86h0M48.5 13.86h0M49.5 13.86h0M50.5 13.86h0M51.5 13.86h0M52.5 13.86h0M53.5 13.86h0M54.5 13.86h0M55.5 13.86h0M56.5 13.86h0M57.5 13.86h0M58.5 13.86h0M59.5 13.86h0M61.5 13.86h0M13 14.72h0M14 14.72h0M15 14.72h0M16 14.72h0M33 14.72h0M34 14.72h0M35 14.72h0M36 14.72h0M37 14.72h0M38 14.72h0M39 14.72h0M40 14.72h0M41 14.72h0M42 14.72h0M43 14.72h0M44 14.72h0M45 14.72h0M46 14.72h0M47 14.72h0M48 14.72h0M49 14.72h0M50 14.72h0M51 14.72h0M52 14.72h0M53 14.72h0M54 14.72h0M55 14.72h0M56 14.72h0M57 14.72h0M58 14.72h0M59 14.72h0M14.5 15.59h0M15.5 15.59h0M32.5 15.59h0M33.5 15.59h0M34.5 15.59h0M35.5 15.59h0M36.5 15.59h0M37.5 15.59h0M38.5 15.59h0M39.5 15.59h0M40.5 15.59h0M41.5 15.59h0M42.5 15.59h0M43.5 15.59h0M44.5 15.59h0M45.5 15.59h0M46.5 15.59h0M49.5 15.59h0M50.5 15.59h0M51.5 15.59h0M52.5 15.59h0M53.5 15.59h0M54.5 15.59h0M55.5 15.59h0M56.5 15.59h0M57.5 15.59h0M58.5 15.59h0M59.5 15.59h0M15 16.45h0M16 16.45h0M18 16.45h0M21 16.45h0M33 16.45h0M34 16.45h0M35 16.45h0M36 16.45h0M37 16.45h0M38 16.45h0M39 16.45h0M40 16.45h0M41 16.45h0M42 16.45h0M44 16.45h0M45 16.45h0M46 16.45h0M50 16.45h0M51 16.45h0M52 16.45h0M55 16.45h0M56 16.45h0M17.5 17.32h0M18.5 17.32h0M32.5 17.32h0M33.5 17.32h0M34.5 17.32h0M35.5 17.32h0M36.5 17.32h0M37.5 17.32h0M38.5 17.32h0M39.5 17.32h0M40.5 17.32h0M41.5 17.32h0M42.5 17.32h0M44.5 17.32h0M45.5 17.32h0M50.5 17.32h0M55.5 17.32h0M56.5 17.32h0M59.5 17.32h0M21 18.19h0M33 18.19h0M34 18.19h0M35 18.19h0M36 18.19h0M37 18.19h0M38 18.19h0M39 18.19h0M40 18.19h0M41 18.19h0M42 18.19h0M43 18.19h0M44 18.19h0M51 18.19h0M56 18.19h0M57 18.19h0M20.5 19.05h0M21.5 19.05h0M22.5 19.05h0M23.5 19.05h0M33.5 19.05h0M34.5 19.05h0M35.5 19.05h0M36.5 19.05h0M37.5 19.05h0M38.5 19.05h0M39.5 19.05h0M40.5 19.05h0M41.5 19.05h0M42.5 19.05h0M43.5 19.05h0M44.5 19.05h0M51.5 19.05h0M55.5 19.05h0M60.5 19.05h0M20 19.92h0M21 19.92h0M22 19.92h0M23 19.92h0M24 19.92h0M25 19.92h0M38 19.92h0M39 19.92h0M40 19.92h0M41 19.92h0M42 19.92h0M43 19.92h0M44 19.92h0M55 19.92h0M56 19.92h0M58 19.92h0M19.5 20.78h0M20.5 20.78h0M21.5 20.78h0M22.5 20.78h0M23.5 20.78h0M24.5 20.78h0M25.5 20.78h0M26.5 20.78h0M37.5 20.78h0M38.5 20.78h0M39.5 20.78h0M40.5 20.78h0M41.5 20.78h0M42.5 20.78h0M43.5 20.78h0M55.5 20.78h0M57.5 20.78h0M58.5 20.78h0M59.5 20.78h0M20 21.65h0M21 21.65h0M22 21.65h0M23 21.65h0M24 21.65h0M25 21.65h0M26 21.65h0M27 21.65h0M28 21.65h0M38 21.65h0M39 21.65h0M40 21.65h0M41 21.65h0M42 21.65h0M43 21.65h0M63 21.65h0M64 21.65h0M20.5 22.52h0M21.5 22.52h0M22.5 22.52h0M23.5 22.52h0M24.5 22.52h0M25.5 22.52h0M26.5 22.52h0M27.5 22.52h0M38.5 22.52h0M39.5 22.52h0M40.5 22.52h0M41.5 22.52h0M42.5 22.52h0M21 23.38h0M22 23.38h0M23 23.38h0M24 23.38h0M25 23.38h0M26 23.38h0M27 23.38h0M38 23.38h0M39 23.38h0M40 23.38h0M41 23.38h0M42 23.38h0M43 23.38h0M45 23.38h0M62 23.38h0M64 23.38h0M22.5 24.25h0M23.5 24.25h0M24.5 24.25h0M25.5 24.25h0M26.5 24.25h0M27.5 24.25h0M38.5 24.25h0M39.5 24.25h0M40.5 24.25h0M41.5 24.25h0M42.5 24.25h0M44.5 24.25h0M60.5 24.25h0M61.5 24.25h0M62.5 24.25h0M63.5 24.25h0M64.5 24.25h0M22 25.11h0M23 25.11h0M24 25.11h0M25 25.11h0M26 25.11h0M27 25.11h0M39 25.11h0M40 25.11h0M41 25.11h0M42 25.11h0M59 25.11h0M60 25.11h0M61 25.11h0M62 25.11h0M63 25.11h0M64 25.11h0M65 25.11h0M21.5 25.98h0M22.5 25.98h0M23.5 25.98h0M24.5 25.98h0M25.5 25.98h0M38.5 25.98h0M39.5 25.98h0M40.5 25.98h0M41.5 25.98h0M58.5 25.98h0M59.5 25.98h0M60.5 25.98h0M61.5 25.98h0M62.5 25.98h0M63.5 25.98h0M64.5 25.98h0M65.5 25.98h0M22 26.85h0M23 26.85h0M24 26.85h0M25 26.85h0M39 26.85h0M40 26.85h0M41 26.85h0M59 26.85h0M60 26.85h0M61 26.85h0M62 26.85h0M63 26.85h0M64 26.85h0M65 26.85h0M21.5 27.71h0M22.5 27.71h0M23.5 27.71h0M24.5 27.71h0M39.5 27.71h0M58.5 27.71h0M62.5 27.71h0M63.5 27.71h0M64.5 27.71h0M21 28.58h0M22 28.58h0M23 28.58h0M24 28.58h0M64 28.58h0M65 28.58h0M21.5 29.44h0M22.5 29.44h0M21 30.31h0M22 30.31h0M69 30.31h0M21.5 31.18h0M21 32.04h0M22 33.77h0"/>
+                  <path class="map-route" d="M21 11.26 Q28.2 3.4 35.5 8.66"/>
+                  <path class="map-route" d="M35.5 8.66 Q47.8 6.2 56 19.92"/>
+                  <circle class="map-pin" cx="21" cy="11.26" r=".85"/>
+                  <circle class="map-pin" cx="35.5" cy="8.66" r=".85"/>
+                  <circle class="map-pin" cx="56" cy="19.92" r=".85"/>
+                </svg>
+                <span class="map-chip">
+                  <svg viewBox="0 0 24 24"><path d="M21 15.5v-1.7l-7.5-4.6V4.3a1.5 1.5 0 0 0-3 0v4.9L3 13.8v1.7l7.5-2.3v4.6l-2 1.5v1.4l3.5-1 3.5 1v-1.4l-2-1.5v-4.6z"/></svg>
+                </span>
+              </div>
+            </div>
+          </article>
+
+          <!-- 01 — Multi-currency management (featured, centre: photographic background) -->
+          <article class="eco-card eco-card-feature" data-reveal style="--i: 1">
+            <div class="eco-copy">
+              <span class="eco-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24"><path d="M12 3.5 3.5 8 12 12.5 20.5 8z"/><path d="m3.5 12 8.5 4.5 8.5-4.5"/><path d="m3.5 16 8.5 4.5 8.5-4.5"/></svg>
+              </span>
+              <h3 class="eco-card-title">Multi-Currency<br />Management</h3>
+              <p class="eco-card-text">Hold, convert, and manage multiple currencies with ease.</p>
+            </div>
+          </article>
+
+          <!-- 03 — Connected wallet -->
+          <article class="eco-card" data-reveal style="--i: 2">
+            <div class="eco-copy">
+              <span class="eco-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24"><path d="M4 7.5A2.5 2.5 0 0 1 6.5 5h11A2.5 2.5 0 0 1 20 7.5v9a2.5 2.5 0 0 1-2.5 2.5h-11A2.5 2.5 0 0 1 4 16.5z"/><path d="M20 10h-4.5a2 2 0 0 0 0 4H20"/><circle class="icon-dot" cx="16" cy="12" r="1"/></svg>
+              </span>
+              <h3 class="eco-card-title">Connected<br />Wallet</h3>
+              <p class="eco-card-text">Bring your cards, currencies, and essential financial tools together.</p>
+            </div>
+            <div class="eco-visual" aria-hidden="true">
+              <div class="eco-panel balance-panel">
+                <p class="bal-label">Total balance</p>
+                <p class="bal-value">&euro;42,890<span>.00</span></p>
+                <svg class="bal-chart" viewBox="0 0 240 80" preserveAspectRatio="none">
+                  <defs>
+                    <linearGradient id="bal-fill" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="0" stop-color="#dab066" stop-opacity="0.22"/>
+                      <stop offset="1" stop-color="#dab066" stop-opacity="0"/>
+                    </linearGradient>
+                  </defs>
+                  <path class="bal-area" d="M0 70 C14 62 22 56 36 58 S58 64 72 52 S96 40 110 46 S134 52 148 38 S170 22 184 28 S206 30 218 16 L240 12 V80 H0 Z"/>
+                  <path class="bal-line" d="M0 70 C14 62 22 56 36 58 S58 64 72 52 S96 40 110 46 S134 52 148 38 S170 22 184 28 S206 30 218 16 L240 12"/>
+                  <circle class="bal-dot" cx="240" cy="12" r="3.2"/>
+                </svg>
+              </div>
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- Section 5 — Security & trust: same design system as Section 4, illustration-first cards -->
+    <section class="security" id="security" aria-labelledby="sec-title" data-scroll-section="security">
+      <div class="sec-inner">
+        <header class="sec-intro" data-reveal>
+          <p class="eyebrow">Your security matters</p>
+          <h2 class="sec-title" id="sec-title">Your money deserves to feel <span class="sec-title-accent">secure.</span></h2>
+          <p class="sec-lede">A closer look at the safeguards and principles behind a more trustworthy financial experience.</p>
+        </header>
+
+        <div class="sec-grid">
+          <!-- 01 — Data protection -->
+          <article class="sec-card" data-reveal style="--i: 0">
+            <div class="sec-ill ill-data" aria-hidden="true">
+              <div class="ill-sheet ill-sheet-back"></div>
+              <div class="ill-sheet ill-sheet-front">
+                <span class="ill-line" style="width: 46%"></span>
+                <span class="ill-line" style="width: 72%"></span>
+                <span class="ill-line" style="width: 60%"></span>
+                <span class="ill-line" style="width: 38%"></span>
+              </div>
+              <div class="ill-lock">
+                <svg viewBox="0 0 40 40">
+                  <defs>
+                    <linearGradient id="lock-gold" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="0" stop-color="#e8c98c"/><stop offset="1" stop-color="#c99a4a"/>
+                    </linearGradient>
+                  </defs>
+                  <path d="M13 17v-4a7 7 0 0 1 14 0v4" fill="none" stroke="#c99a4a" stroke-width="3" stroke-linecap="round"/>
+                  <rect x="9" y="16.5" width="22" height="17" rx="4.5" fill="url(#lock-gold)"/>
+                  <circle cx="20" cy="23.6" r="2.2" fill="#252321"/>
+                  <path d="M20 24.5v3.6" stroke="#252321" stroke-width="1.8" stroke-linecap="round"/>
+                </svg>
+              </div>
+            </div>
+            <div class="sec-content">
+              <span class="sec-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24"><rect x="5" y="10.5" width="14" height="9.5" rx="2.5"/><path d="M8.5 10.5V8a3.5 3.5 0 0 1 7 0v2.5"/><path d="M12 14.2v2.2"/></svg>
+              </span>
+              <div>
+                <h3 class="sec-card-title">Data Protection</h3>
+                <p class="sec-card-text">Protecting the privacy of personal and financial information.</p>
+              </div>
+            </div>
+          </article>
+
+          <!-- 02 — Account security -->
+          <article class="sec-card" data-reveal style="--i: 1">
+            <div class="sec-ill ill-account" aria-hidden="true">
+              <div class="ill-form">
+                <div class="ill-field">
+                  <svg class="ill-field-icon" viewBox="0 0 24 24"><circle cx="12" cy="8.5" r="3.5"/><path d="M5 19.5c1.2-3.4 3.8-5 7-5s5.8 1.6 7 5"/></svg>
+                  <span class="ill-field-text">alex.morgan</span>
+                </div>
+                <div class="ill-field">
+                  <svg class="ill-field-icon" viewBox="0 0 24 24"><rect x="5" y="10.5" width="14" height="9.5" rx="2.5"/><path d="M8.5 10.5V8a3.5 3.5 0 0 1 7 0v2.5"/></svg>
+                  <span class="ill-dots"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></span>
+                  <span class="ill-check"><svg viewBox="0 0 24 24"><path d="m7 12.5 3.2 3.2L17 9"/></svg></span>
+                </div>
+              </div>
+            </div>
+            <div class="sec-content">
+              <span class="sec-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24"><path d="M12 3.5 5 6.2v5.3c0 4.3 3 7.6 7 9 4-1.4 7-4.7 7-9V6.2z"/></svg>
+              </span>
+              <div>
+                <h3 class="sec-card-title">Account Security</h3>
+                <p class="sec-card-text">Safeguards designed to support secure account access.</p>
+              </div>
+            </div>
+          </article>
+
+          <!-- 03 — Two-factor authentication -->
+          <article class="sec-card" data-reveal style="--i: 2">
+            <div class="sec-ill ill-2fa" aria-hidden="true">
+              <div class="ill-phone">
+                <span class="ill-notch"></span>
+                <span class="ill-shield">
+                  <svg viewBox="0 0 24 24"><path class="s" d="M12 3.5 5 6.2v5.3c0 4.3 3 7.6 7 9 4-1.4 7-4.7 7-9V6.2z"/><path class="c" d="m8.8 12.2 2.3 2.3 4.2-4.6"/></svg>
+                </span>
+                <span class="ill-code-label">Verification code</span>
+                <span class="ill-code"><b>4</b><b>8</b><b>2</b><b>9</b><b>6</b><b>7</b></span>
+              </div>
+            </div>
+            <div class="sec-content">
+              <span class="sec-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24"><rect x="7" y="3.5" width="10" height="17" rx="2.5"/><path d="M11 17.5h2"/></svg>
+              </span>
+              <div>
+                <h3 class="sec-card-title">Two-Factor Authentication</h3>
+                <p class="sec-card-text">An additional identity verification step when signing in.</p>
+              </div>
+            </div>
+          </article>
+
+          <!-- 04 — Transaction monitoring (wide) -->
+          <article class="sec-card sec-card-wide" data-reveal style="--i: 0">
+            <div class="sec-ill ill-monitor" aria-hidden="true">
+              <div class="ill-chart">
+                <svg viewBox="0 0 400 150" preserveAspectRatio="none">
+                  <defs>
+                    <linearGradient id="mon-fill" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="0" stop-color="#dab066" stop-opacity="0.2"/>
+                      <stop offset="1" stop-color="#dab066" stop-opacity="0"/>
+                    </linearGradient>
+                  </defs>
+                  <path class="mon-grid" d="M0 30H400M0 70H400M0 110H400"/>
+                  <path class="mon-area" d="M0 118 C30 116 50 104 78 106 S120 122 150 108 S190 74 218 70 S258 92 284 84 S326 40 352 36 S386 44 400 42 V150 H0 Z"/>
+                  <path class="mon-line" d="M0 118 C30 116 50 104 78 106 S120 122 150 108 S190 74 218 70 S258 92 284 84 S326 40 352 36 S386 44 400 42"/>
+                </svg>
+                <span class="mon-point" style="left: 54.5%; top: 46.7%"></span>
+              </div>
+            </div>
+            <div class="sec-content">
+              <span class="sec-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24"><path d="M3.5 12h4l2.2-5 4.2 10 2.2-5h4.4"/></svg>
+              </span>
+              <div>
+                <h3 class="sec-card-title">Transaction Monitoring</h3>
+                <p class="sec-card-text">Visibility into account activity and transaction patterns.</p>
+              </div>
+            </div>
+          </article>
+
+          <!-- 05 — Regulatory information (wide) -->
+          <article class="sec-card sec-card-wide" data-reveal style="--i: 1">
+            <div class="sec-ill ill-reg" aria-hidden="true">
+              <div class="ill-sheet ill-doc-back"></div>
+              <div class="ill-sheet ill-doc">
+                <span class="ill-line ill-line-strong" style="width: 44%"></span>
+                <span class="ill-line" style="width: 78%"></span>
+                <span class="ill-line" style="width: 66%"></span>
+                <span class="ill-line" style="width: 72%"></span>
+                <span class="ill-line" style="width: 40%"></span>
+              </div>
+              <span class="ill-seal">
+                <svg viewBox="0 0 48 48">
+                  <defs>
+                    <linearGradient id="seal-gold" x1="0" y1="0" x2="1" y2="1">
+                      <stop offset="0" stop-color="#ead09a"/><stop offset="1" stop-color="#c99a4a"/>
+                    </linearGradient>
+                  </defs>
+                  <path d="M17 30 13 44l6-3 4 5 3-13zM31 30l4 14-6-3-4 5-3-13z" fill="#c99a4a"/>
+                  <circle cx="24" cy="21" r="14" fill="url(#seal-gold)"/>
+                  <circle cx="24" cy="21" r="10.5" fill="none" stroke="#fff" stroke-opacity="0.7" stroke-width="1"/>
+                  <path d="m24 14.6 1.9 3.9 4.3.6-3.1 3 .7 4.3-3.8-2-3.8 2 .7-4.3-3.1-3 4.3-.6z" fill="#fff"/>
+                </svg>
+              </span>
+            </div>
+            <div class="sec-content">
+              <span class="sec-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24"><path d="M7 3.5h7l4 4v13H7z"/><path d="M14 3.5v4h4"/><path d="M9.5 12h6M9.5 15h6M9.5 18h3.5"/></svg>
+              </span>
+              <div>
+                <h3 class="sec-card-title">Regulatory Information</h3>
+                <p class="sec-card-text">Clear information about applicable regulations and requirements.</p>
+              </div>
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- Section 6 — Final CTA + footer: the closing section of the page -->
+    <section class="closing" id="closing" aria-labelledby="cta-title" data-scroll-section="closing">
+      <div class="closing-inner">
+        <div class="cta-panel">
+          <svg class="cta-curves" viewBox="0 0 1200 400" preserveAspectRatio="none" aria-hidden="true">
+            <defs>
+              <linearGradient id="cta-curve-tr" x1="860" y1="0" x2="1200" y2="250" gradientUnits="userSpaceOnUse">
+                <stop offset="0" stop-color="#dab066" stop-opacity="0"/>
+                <stop offset="0.45" stop-color="#dab066" stop-opacity="0.75"/>
+                <stop offset="1" stop-color="#dab066" stop-opacity="0.1"/>
+              </linearGradient>
+              <linearGradient id="cta-curve-bl" x1="0" y1="290" x2="330" y2="400" gradientUnits="userSpaceOnUse">
+                <stop offset="0" stop-color="#dab066" stop-opacity="0.08"/>
+                <stop offset="0.7" stop-color="#dab066" stop-opacity="0.6"/>
+                <stop offset="1" stop-color="#dab066" stop-opacity="0"/>
+              </linearGradient>
+            </defs>
+            <path d="M880 -20 C1000 40 1110 120 1230 260" stroke="url(#cta-curve-tr)" />
+            <path d="M-30 290 C90 315 200 352 330 420" stroke="url(#cta-curve-bl)" />
+          </svg>
+          <div class="cta-content">
+            <p class="eyebrow cta-eyebrow">Ready to explore AVORA?</p>
+            <h2 class="cta-title" id="cta-title">Take your finances <span class="cta-accent">further.</span></h2>
+            <p class="cta-text">Discover a different perspective on managing money across currencies.</p>
+            <!-- destination is configurable: no route exists yet (the page's other CTAs also point to "#") -->
+            <a class="btn btn-gold" href="#" data-cta="explore">Explore AVORA <span class="btn-arrow" aria-hidden="true">&rarr;</span></a>
+          </div>
+        </div>
+
+        <footer class="site-footer" aria-label="Footer">
+          <div class="footer-top">
+            <div class="footer-brand">
+              <a class="footer-home" href="#" aria-label="AVORA home"><svg class="footer-logo" viewBox="0 0 1458 251" aria-hidden="true" focusable="false"><path d="M497.937 183.333L554.937 66.6647H575.938L632.605 183.333H612.772L573.604 102.999C572.604 100.888 571.604 98.8319 570.604 96.8319C569.604 94.8319 568.604 92.8318 567.604 90.8318C566.715 88.8318 565.827 86.7206 564.938 84.4984C564.049 82.2761 563.16 79.8316 562.271 77.1649L567.604 76.9982C566.604 79.665 565.604 82.165 564.604 84.4984C563.715 86.8317 562.771 89.054 561.771 91.1651C560.771 93.2763 559.771 95.3874 558.771 97.4986C557.771 99.4986 556.771 101.554 555.771 103.665L516.937 183.333H497.937Z" fill="currentColor"/><path d="M746.273 183.333L692.438 66.6647H712.772L743.939 136.166C744.606 137.721 745.661 139.999 747.106 142.999C748.55 145.888 750.106 149.166 751.773 152.833C753.439 156.5 755.051 160.111 756.606 163.666C758.162 167.222 759.384 170.389 760.273 173.166L754.939 173.333C756.162 170 757.717 166.111 759.606 161.666C761.606 157.111 763.551 152.611 765.44 148.166C767.44 143.61 769.106 139.721 770.44 136.499L799.273 66.6647H820.44L767.94 183.333H746.273Z" fill="currentColor"/><path d="M964.255 185C953.922 185 944.477 183.5 935.922 180.5C927.366 177.389 919.921 173.111 913.588 167.666C907.254 162.111 902.365 155.722 898.921 148.499C895.476 141.166 893.754 133.333 893.754 124.999C893.754 116.666 895.476 108.888 898.921 101.665C902.365 94.3319 907.254 87.9429 913.588 82.4983C919.921 76.9427 927.366 72.6648 935.922 69.6648C944.477 66.5536 953.922 64.998 964.255 64.998C974.478 64.998 983.867 66.5536 992.423 69.6648C1000.98 72.6648 1008.42 76.9427 1014.76 82.4983C1021.09 87.9429 1025.98 94.3319 1029.42 101.665C1032.98 108.888 1034.76 116.666 1034.76 124.999C1034.76 133.333 1032.98 141.166 1029.42 148.499C1025.98 155.722 1021.09 162.111 1014.76 167.666C1008.42 173.111 1000.98 177.389 992.423 180.5C983.867 183.5 974.478 185 964.255 185ZM964.255 167.5C971.922 167.5 978.922 166.444 985.256 164.333C991.589 162.111 997.089 159.111 1001.76 155.333C1006.42 151.444 1010.03 146.944 1012.59 141.833C1015.15 136.61 1016.42 130.999 1016.42 124.999C1016.42 118.999 1015.15 113.443 1012.59 108.332C1010.03 103.11 1006.42 98.6097 1001.76 94.8319C997.089 90.9429 991.589 87.9429 985.256 85.8317C978.922 83.6095 971.922 82.4983 964.255 82.4983C956.589 82.4983 949.533 83.6095 943.088 85.8317C936.755 87.9429 931.255 90.9429 926.588 94.8319C921.921 98.6097 918.31 103.11 915.755 108.332C913.31 113.443 912.088 118.999 912.088 124.999C912.088 130.999 913.31 136.61 915.755 141.833C918.31 146.944 921.921 151.444 926.588 155.333C931.255 159.111 936.755 162.111 943.088 164.333C949.533 166.444 956.589 167.5 964.255 167.5Z" fill="currentColor"/><path d="M1323.15 183.333L1380.15 66.6647H1401.15L1457.81 183.333H1437.98L1398.81 102.999C1397.81 100.888 1396.81 98.8319 1395.81 96.8319C1394.81 94.8319 1393.81 92.8318 1392.81 90.8318C1391.92 88.8318 1391.04 86.7206 1390.15 84.4984C1389.26 82.2761 1388.37 79.8316 1387.48 77.1649L1392.81 76.9982C1391.81 79.665 1390.81 82.165 1389.81 84.4984C1388.92 86.8317 1387.98 89.054 1386.98 91.1651C1385.98 93.2763 1384.98 95.3874 1383.98 97.4986C1382.98 99.4986 1381.98 101.554 1380.98 103.665L1342.15 183.333H1323.15Z" fill="currentColor"/><path d="M1128.02 183.333V66.6647H1196.19C1203.08 66.6647 1209.35 68.2759 1215.02 71.4982C1220.8 74.6093 1225.41 78.8872 1228.85 84.3317C1232.3 89.7762 1234.02 95.8319 1234.02 102.499C1234.02 109.499 1232.13 115.888 1228.35 121.666C1224.58 127.332 1219.58 131.888 1213.35 135.333C1207.88 138.265 1201.13 139.693 1194.52 139.994L1237.38 183.333H1213.57L1150.47 122.999H1168.33H1173.09H1191.82C1196.04 122.999 1199.3 122.055 1202.85 120.166C1206.52 118.277 1209.41 115.777 1211.52 112.665C1213.74 109.554 1214.85 106.165 1214.85 102.499C1214.85 99.0542 1213.74 95.943 1211.52 93.1652C1209.41 90.3874 1206.52 88.1651 1202.85 86.4984C1199.3 84.8317 1195.41 83.9984 1191.19 83.9984H1146.02V122.999V183.333H1128.02Z" fill="currentColor"/><path d="M143.159 198.931C143.159 198.931 215.04 117.636 297.795 142.094C364.641 161.85 418 249.117 418 249.117C418 249.117 372 249.117 341.89 249.117C256.72 118.529 143.159 198.931 143.159 198.931Z" fill="currentColor"/><path d="M351.555 151.768C351.555 151.768 313.5 113.675 257.928 113.675C202.355 113.675 170.945 151.336 149.199 177.768C123.829 208.605 71.2775 249.117 0 249.117C78.526 171.722 152.124 0 210.812 0C269.5 0 297.795 79.227 351.555 151.768Z" fill="currentColor"/></svg></a>
+              <p class="footer-tagline">A modern financial platform for a world without borders.</p>
+            </div>
+            <!-- links are placeholders ("#") until the real routes exist -->
+            <nav class="footer-cols" aria-label="Footer">
+              <div class="footer-col">
+                <h3 class="footer-heading">Product</h3>
+                <ul><li><a href="#">Platform</a></li><li><a href="#">Features</a></li></ul>
+              </div>
+              <div class="footer-col">
+                <h3 class="footer-heading">Company</h3>
+                <ul><li><a href="#">About</a></li><li><a href="#">Contact</a></li></ul>
+              </div>
+              <div class="footer-col">
+                <h3 class="footer-heading">Support</h3>
+                <ul><li><a href="#">Help Center</a></li></ul>
+              </div>
+              <div class="footer-col">
+                <h3 class="footer-heading">Legal</h3>
+                <ul><li><a href="#">Privacy Policy</a></li><li><a href="#">Terms &amp; Conditions</a></li></ul>
+              </div>
+            </nav>
+          </div>
+          <div class="footer-bottom">
+            <p class="footer-copy">&copy; 2026 AVORA. All rights reserved.</p>
+            <!-- social links: add icons here once real AVORA accounts exist -->
+          </div>
+        </footer>
+      </div>
+    </section>
+
+    <script src="./src/vendor/three.min.js"></script>
+    <script src="./src/vendor/gsap.min.js"></script>
+    <script src="./src/vendor/ScrollTrigger.min.js"></script>
+    <script src="./src/scene/water.js?v=47"></script>
+    <script src="./src/scene/card.js?v=47"></script>
+    <script src="./src/scene/halo.js?v=47"></script>
+    <script src="./src/scene/wallet.js?v=47"></script>
+    <script src="./src/scene/journey.js?v=47"></script>
+    <script src="./src/main.js?v=47"></script>
+    <script src="./src/sections/ecosystem.js?v=47"></script>
+    <script src="./src/sections/security.js?v=47"></script>
+  </body>
+</html>
